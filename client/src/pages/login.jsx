@@ -1,13 +1,51 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { assets } from "../assets/assets";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { AppContent } from "../context/AppContext";
 
 const Login = () => {
-  const navigate = useNavigate(); // ✅ call useNavigate to get the navigate function
+  const navigate = useNavigate();
+
+  // ✅ call useNavigate to get the navigate function
+  const { backendUrl, setIsloggedin } = useContext(AppContent);
   const [state, setState] = useState("Signup");
   const [Name, setName] = useState("");
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
+  const onsubmitHandler = async (e) => {
+    try {
+      e.preventDefault();
+      axios.defaults.withCredentials = true;
+      if (state === "Signup") {
+        const { data } = await axios.post(backendUrl + "/api/auth/register", {
+          Name,
+          email,
+          password,
+        });
+        if (data.success) {
+          setIsloggedin(true);
+          navigate("/");
+        } else {
+          toast.error(data.message);
+        }
+      } else {
+        const { data } = await axios.post(backendUrl + "/api/auth/login", {
+          email,
+          password,
+        });
+        if (data.success) {
+          setIsloggedin(true);
+          navigate("/");
+        } else {
+          toast.error(data.message);
+        }
+      }
+    } catch (error) {
+      toast.error(data.message);
+    }
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen px-6 sm:px-0 bg-gradient-to-br from-blue-200 to-purple-400">
@@ -23,7 +61,7 @@ const Login = () => {
         <p className="text-center text-sm mb-6">
           {state === "Signup" ? "Create Your account" : "Login your account!"}
         </p>
-        <form>
+        <form onSubmit={onsubmitHandler}>
           {state === "Signup" && (
             <div className="mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-[#333A5c]">
               <img src={assets.person_icon} />
