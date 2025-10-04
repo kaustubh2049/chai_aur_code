@@ -1,0 +1,23 @@
+commands
+npm uninstall tailwindcss
+npm install -D tailwindcss@3.4.13 postcss autoprefixer
+npx tailwindcss init -p
+
+Updated src/index.css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+tailwind.config.js:
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
